@@ -20,6 +20,19 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+  
+  document.querySelector('#compose-form').addEventListener('submit',()=>{
+    fetch('/emails',{
+      method:'POST',
+      body:JSON.stringify({
+        recipients:document.querySelector('#compose-recipients').value,
+        subject: document.querySelector('#compose-subject').value.charAt(0).toUpperCase() + document.querySelector('#compose-subject').value.slice(1),
+        body: document.querySelector('#compose-body').value
+      })
+    }).then(response => response.json()).then(result =>{
+      console.log(result);
+    });
+  });
 }
 
 function load_mailbox(mailbox) {
@@ -30,4 +43,45 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+  fetch(`/emails/${mailbox}`).then(response => response.json()).then(emails => {
+    const emailview = document.querySelector('#emails-view');
+    if(mailbox==='sent'){
+      emails.forEach(element => {
+        let card = 
+        `<div class="card my-1">
+          <div class="row mx-1">
+            <div class="col">
+              <strong>${element.recipients}</strong>
+            </div>
+            <div class="col">
+              ${element.subject}
+            </div>
+            <div class="col ml-auto">
+              ${element.timestamp}
+            </div>
+            <a href="emails/${element.id}" class="stretched-link"></a>
+          </div>
+         </div>`;
+        emailview.innerHTML = emailview.innerHTML + card;
+      });
+    }else{
+    emails.forEach(element => {
+      let card = 
+      `<div class="card my-1">
+        <div class="row">
+          <div class="col">
+            <strong>${element.sender}</strong>
+          </div>
+          <div class="col">
+            ${element.subject}
+          </div>
+          <div class="col ml-auto">
+            ${element.timestamp}
+          </div>
+          <a href="emails/${element.id}" class="stretched-link"></a>
+        </div>
+       </div>`;
+      emailview.innerHTML = emailview.innerHTML + card;
+    });}
+});
 }
