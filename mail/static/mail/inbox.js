@@ -20,22 +20,18 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
   
   document.querySelector('#compose-form').addEventListener('submit',async ()=> {
-    const response = await fetch('/emails',{
+    await fetch('/emails',{
       method:'POST',
       body:JSON.stringify({
         recipients:document.querySelector('#compose-recipients').value,
         subject: document.querySelector('#compose-subject').value.charAt(0).toUpperCase() + document.querySelector('#compose-subject').value.slice(1),
         body: document.querySelector('#compose-body').value
       })
-    });
-    if(response.status==201){
-      console.log("happy");
-    }
+    }).then(response => load_mailbox('sent'));
   });
 }
 
 function load_mailbox(mailbox) {
-  
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
