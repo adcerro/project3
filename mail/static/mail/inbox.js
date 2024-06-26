@@ -56,7 +56,7 @@ function load_mailbox(mailbox) {
             <div class="col">
               <strong>${element.recipients}</strong>
             </div>
-            <div class="col">
+            <div class="col mx-auto">
               ${element.subject}
             </div>
             <div class="col ml-auto">
