@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
+  
+  load_mailbox("inbox");
 });
 
 function compose_email() {
@@ -18,10 +20,11 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
-  
-  document.querySelector('#compose-form').addEventListener('submit',async ()=> {
-    const response = await fetch('/emails',{
+  document.querySelector('#compose-form').addEventListener('submit',async (event)=> {
+    event.preventDefault();
+    const response = await fetch('./emails',{
       method:'POST',
+      headers: { 'Content-Type': 'application/json' },
       body:JSON.stringify({
         recipients:document.querySelector('#compose-recipients').value,
         subject: document.querySelector('#compose-subject').value.charAt(0).toUpperCase() + document.querySelector('#compose-subject').value.slice(1),
@@ -30,8 +33,6 @@ function compose_email() {
     });
     if(response.ok){
       load_mailbox('sent');
-    }else{
-      alert(`Error`);
     }
   });
 }
@@ -47,7 +48,6 @@ function load_mailbox(mailbox) {
   fetch(`/emails/${mailbox}`).then(response => response.json()).then(emails => {
     const emailview = document.querySelector('#emails-view');
     if(mailbox==='sent'){
-      console.log("sent messages");
       emails.forEach(element => {
         let card = 
         `<div class="card my-1">
@@ -67,7 +67,6 @@ function load_mailbox(mailbox) {
         emailview.innerHTML = emailview.innerHTML + card;
       });
     }else{
-      console.log("hiiiii");
     emails.forEach(element => {
       let card = 
       `<div class="card my-1 ${element.read?'bg-secondary':''}">
