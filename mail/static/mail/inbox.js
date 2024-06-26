@@ -52,14 +52,14 @@ function load_mailbox(mailbox) {
       emails.forEach(element => {
         let card = 
         `<div class="card my-1">
-          <div class="row mx-1">
+          <div class="row mx-1 align-items-center">
             <div class="col">
               <strong>${element.recipients}</strong>
             </div>
-            <div class="col mx-auto">
+            <div class="col-6">
               ${element.subject}
             </div>
-            <div class="col ml-auto">
+            <div class="col text-end">
               ${element.timestamp}
             </div>
             <a href="emails/${element.id}" class="stretched-link"></a>
@@ -71,14 +71,14 @@ function load_mailbox(mailbox) {
     emails.forEach(element => {
       let card = 
       `<div class="card my-1 ${element.read?'bg-secondary':''}">
-        <div class="row mx-1">
+        <div class="row mx-1 align-items-center">
           <div class="col">
             <strong>${element.sender}</strong>
           </div>
-          <div class="col">
+          <div class="col-6">
             ${element.subject}
           </div>
-          <div class="col ml-auto">
+          <div class="col text-end">
             ${element.timestamp}
           </div>
           <a href="emails/${element.id}" class="stretched-link"></a>
