@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click', ()=>compose_email());
 
   // Default loads the inbox
   load_mailbox("inbox");
@@ -14,6 +14,8 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  // emails-view uses a bootstrap class which needs to be modified
+  document.querySelector('#emails-view').className = 'd-none';
   document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
@@ -41,6 +43,8 @@ function compose_email() {
 function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
+  // emails-view uses a bootstrap class which needs to be modified
+  document.querySelector('#emails-view').className = 'd-grid gap-2';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#email-view').style.display = 'none';
 
@@ -52,9 +56,9 @@ function load_mailbox(mailbox) {
       emails.forEach(element => {
         let mailButton = document.createElement("button");
         mailButton.className = "btn btn-outline-dark";
-        mailButton.onclick = ()=>{console.log("hi");};
+        mailButton.onclick = ()=>load_email(element.id);
         let buttonContent = 
-        ` <div class="row mx-1 align-items-center">
+        ` <div class="row align-items-center">
             <div class="col">
               <strong>${element.recipients}</strong>
             </div>
@@ -71,9 +75,10 @@ function load_mailbox(mailbox) {
     }else{
     emails.forEach(element => {
       let mailButton = document.createElement("button");
-      mailButton.className = `btn ${element.read?'btn-secondary':'btn-outline-dark'} btn-block`;
+      mailButton.className = `btn ${element.read?'btn-secondary':'btn-outline-dark'}`;
+      mailButton.onclick = ()=>load_email(element.id);
       let buttonContent = 
-      `<div class="row mx-1 align-items-center">
+      `<div class="row align-items-center">
           <div class="col">
             <strong>${element.sender}</strong>
           </div>
@@ -90,7 +95,10 @@ function load_mailbox(mailbox) {
 });
 }
 function load_email(id){
+  // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  // emails-view uses a bootstrap class which needs to be modified
+  document.querySelector('#emails-view').className = 'd-none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#email-view').style.display = 'block';
 }
