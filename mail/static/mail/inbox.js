@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
-  
+
   // Default loads the inbox
   load_mailbox("inbox");
 });
@@ -23,7 +23,7 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
   document.querySelector('#compose-form').addEventListener('submit',async (event)=> {
     event.preventDefault();
-    const response = await fetch('./emails',{
+    const response = await fetch('/emails',{
       method:'POST',
       headers: { 'Content-Type': 'application/json' },
       body:JSON.stringify({
@@ -50,9 +50,11 @@ function load_mailbox(mailbox) {
     const emailview = document.querySelector('#emails-view');
     if(mailbox==='sent'){
       emails.forEach(element => {
-        let card = 
-        `<div class="card my-1">
-          <div class="row mx-1 align-items-center">
+        let mailButton = document.createElement("button");
+        mailButton.className = "btn btn-outline-dark";
+        mailButton.onclick = ()=>{console.log("hi");};
+        let buttonContent = 
+        ` <div class="row mx-1 align-items-center">
             <div class="col">
               <strong>${element.recipients}</strong>
             </div>
@@ -62,16 +64,16 @@ function load_mailbox(mailbox) {
             <div class="col text-end">
               ${element.timestamp}
             </div>
-            <a href="emails/${element.id}" class="stretched-link"></a>
-          </div>
-         </div>`;
-        emailview.innerHTML = emailview.innerHTML + card;
+          </div>`;
+        mailButton.innerHTML = mailButton.innerHTML + buttonContent;
+        emailview.appendChild(mailButton);
       });
     }else{
     emails.forEach(element => {
-      let card = 
-      `<div class="card my-1 ${element.read?'bg-secondary':''}">
-        <div class="row mx-1 align-items-center">
+      let mailButton = document.createElement("button");
+      mailButton.className = `btn ${element.read?'btn-secondary':'btn-outline-dark'} btn-block`;
+      let buttonContent = 
+      `<div class="row mx-1 align-items-center">
           <div class="col">
             <strong>${element.sender}</strong>
           </div>
@@ -81,10 +83,9 @@ function load_mailbox(mailbox) {
           <div class="col text-end">
             ${element.timestamp}
           </div>
-          <a href="emails/${element.id}" class="stretched-link"></a>
-        </div>
-       </div>`;
-      emailview.innerHTML = emailview.innerHTML + card;
+        </div>`;
+       mailButton.innerHTML = mailButton.innerHTML + buttonContent;
+       emailview.appendChild(mailButton);
     });}
 });
 }
