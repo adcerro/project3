@@ -68,7 +68,7 @@ function load_mailbox(mailbox) {
   fetch(`/emails/${mailbox}`)
     .then((response) => response.json())
     .then((emails) => {
-      const emailview = document.querySelector("#emails-view");
+      const emailsview = document.querySelector("#emails-view");
       if (mailbox === "sent") {
         emails.forEach((element) => {
           let mailButton = document.createElement("button");
@@ -86,7 +86,7 @@ function load_mailbox(mailbox) {
             </div>
           </div>`;
           mailButton.innerHTML = mailButton.innerHTML + buttonContent;
-          emailview.appendChild(mailButton);
+          emailsview.appendChild(mailButton);
         });
       } else {
         emails.forEach((element) => {
@@ -107,7 +107,7 @@ function load_mailbox(mailbox) {
           </div>
         </div>`;
           mailButton.innerHTML = mailButton.innerHTML + buttonContent;
-          emailview.appendChild(mailButton);
+          emailsview.appendChild(mailButton);
         });
       }
     });
@@ -119,7 +119,22 @@ function load_email(id, isRecipient) {
   document.querySelector("#emails-view").className = "d-none";
   document.querySelector("#compose-view").style.display = "none";
   document.querySelector("#email-view").style.display = "block";
-  fetch(`/emails/${id}`).then((response)=>response.json()).then((email)=>{});
+
+  fetch(`/emails/${id}`)
+    .then((response) => response.json())
+    .then((email) => {
+      document.querySelector("#email-sender").innerHTML= email.sender;
+      document.querySelector("#email-recipients").innerHTML= email.recipients;
+      document.querySelector("#email-subject").innerHTML= email.subject;
+      let bodySection = document.querySelector("#email-body");
+      // Clear any content inside the email-body div
+      bodySection.innerHTML = "";
+      email.body.split("\n").forEach((line)=>{
+        let p = document.createElement("p");
+        p.innerHTML = line;
+        bodySection.appendChild(p);
+      });
+    });
   if (isRecipient) {
     fetch(`/emails/${id}`, {
       method: "PUT",

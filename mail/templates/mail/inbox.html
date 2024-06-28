@@ -2,40 +2,51 @@
 {% load static %}
 
 {% block body %}
-    <h2>{{ request.user.email }}</h2>
+<h2>{{ request.user.email }}</h2>
 
-    <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
-    <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
-    <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
-    <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
-    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+<button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
+<button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
+<button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
+<button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
+<a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+<hr>
+
+<div id="emails-view" class="d-grid gap-2">
+</div>
+<div id="email-view" style="display: none;">
+    <header>
+        <h5>From:</h5>
+        <p id="email-sender"></p>
+        <h5>To:</h5>
+        <p id="email-recipients"></p>
+        <h5>Subject:</h5>
+        <p id="email-subject"></p>
+    </header>
     <hr>
-
-    <div id="emails-view" class="d-grid gap-2">
+    <div id="email-body">
     </div>
-    <div id="email-view" style="display: none;">
-    </div>
-    <div id="compose-view" style="display: none;">
-        <h3>New Email</h3>
-        <form id="compose-form" method="post">
-            {% csrf_token %}
-            <div class="form-group mb-2">
-                From: <input disabled class="form-control" value="{{ request.user.email }}">
-            </div>
-            <div class="form-group mb-3">
-                To: <input id="compose-recipients" class="form-control" type="email" required multiple>
-            </div>
-            <div class="form-group mb-3">
-                <input class="form-control" id="compose-subject" placeholder="Subject">
-            </div>
-            <textarea class="form-control mb-3" id="compose-body" placeholder="Body" style="height: 200px"></textarea>
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary"> Send </button>
-            </div>
-        </form>
-    </div>
+</div>
+<div id="compose-view" style="display: none;">
+    <h3>New Email</h3>
+    <form id="compose-form" method="post">
+        {% csrf_token %}
+        <div class="form-group mb-2">
+            From: <input disabled class="form-control" value="{{ request.user.email }}">
+        </div>
+        <div class="form-group mb-3">
+            To: <input id="compose-recipients" class="form-control" type="email" required multiple>
+        </div>
+        <div class="form-group mb-3">
+            <input class="form-control" id="compose-subject" placeholder="Subject">
+        </div>
+        <textarea class="form-control mb-3" id="compose-body" placeholder="Body" style="height: 200px"></textarea>
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary"> Send </button>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'mail/inbox.js' %}"></script>
+<script src="{% static 'mail/inbox.js' %}"></script>
 {% endblock %}
