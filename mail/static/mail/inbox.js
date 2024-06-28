@@ -138,12 +138,39 @@ function load_email(id, isRecipient) {
         p.innerHTML = line;
         bodySection.appendChild(p);
       });
+      if (isRecipient) {
+        fetch(`/emails/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ read: true }),
+        });
+        document.querySelector("#email-archive").style.display = "block";
+        let archiveButton = document.querySelector("#archive-button");
+        if (email.archived) {
+          archiveButton.innerHTML = "Unarchive";
+          archiveButton.onclick = () => unarchive(id);
+        } else {
+          archiveButton.innerHTML = "Archive";
+          archiveButton.onclick = () => archive(id);
+        }
+      } else {
+        document.querySelector("#email-archive").style.display = "none";
+      }
     });
-  if (isRecipient) {
-    fetch(`/emails/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ read: true }),
-    });
-  }
+}
+function archive(id) {
+  fetch(`/emails/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ archived: true }),
+  });
+  load_mailbox("inbox");
+}
+function unarchive(id) {
+  fetch(`/emails/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ archived: false }),
+  });
+  load_mailbox("inbox");
 }
