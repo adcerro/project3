@@ -165,16 +165,15 @@ function archive(id) {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ archived: true }),
-  });
-  load_mailbox("inbox");
+  }).then(response =>load_mailbox("inbox"));
 }
 function unarchive(id) {
   fetch(`/emails/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ archived: false }),
-  });
-  load_mailbox("inbox");
+  }).then(response =>load_mailbox("inbox"));
+  
 }
 function compose_reply(email) {
   compose_email();
