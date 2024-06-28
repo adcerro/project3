@@ -144,7 +144,9 @@ function load_email(id, isRecipient) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ read: true }),
         });
-        document.querySelector("#email-archive").style.display = "block";
+        document.querySelector("#recipient-options").style.display = "block";
+        document.querySelector("#reply-button").onclick = () =>
+          compose_reply(email);
         let archiveButton = document.querySelector("#archive-button");
         if (email.archived) {
           archiveButton.innerHTML = "Unarchive";
@@ -173,4 +175,16 @@ function unarchive(id) {
     body: JSON.stringify({ archived: false }),
   });
   load_mailbox("inbox");
+}
+function compose_reply(email) {
+  compose_email();
+  // Fill composition fields
+  document.querySelector("#compose-recipients").value = email.sender;
+  document.querySelector("#compose-subject").value =
+    email.subject.substring(0, 4) === "Re: "
+      ? email.subject
+      : `Re: ${email.subject}`;
+  document.querySelector(
+    "#compose-body"
+  ).value = `On ${email.timestamp} ${email.sender} wrote:\n${email.body}\n--------------------------------------`;
 }
