@@ -13,6 +13,32 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelector("#compose")
     .addEventListener("click", () => compose_email());
 
+  // Adding the listener for sending mails only once, even if the form is hidden
+  document
+    .querySelector("#compose-form")
+    .addEventListener("submit", (event) => {
+      event.preventDefault();
+      fetch("/emails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipients: document.querySelector("#compose-recipients").value,
+          subject:
+            document
+              .querySelector("#compose-subject")
+              .value.charAt(0)
+              .toUpperCase() +
+            document.querySelector("#compose-subject").value.slice(1),
+          body: document.querySelector("#compose-body").value,
+        }),
+      }).then((response) => {
+        if (response.ok) {
+          load_mailbox("sent");
+          console.log("sent");
+        }
+      });
+    });
+
   // Default loads the inbox
   load_mailbox("inbox");
 });
@@ -29,28 +55,6 @@ function compose_email() {
   document.querySelector("#compose-recipients").value = "";
   document.querySelector("#compose-subject").value = "";
   document.querySelector("#compose-body").value = "";
-  document
-    .querySelector("#compose-form")
-    .addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const response = await fetch("/emails", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          recipients: document.querySelector("#compose-recipients").value,
-          subject:
-            document
-              .querySelector("#compose-subject")
-              .value.charAt(0)
-              .toUpperCase() +
-            document.querySelector("#compose-subject").value.slice(1),
-          body: document.querySelector("#compose-body").value,
-        }),
-      });
-      if (response.ok) {
-        load_mailbox("sent");
-      }
-    });
 }
 
 function load_mailbox(mailbox) {
@@ -123,13 +127,13 @@ function load_email(id, isRecipient) {
   fetch(`/emails/${id}`)
     .then((response) => response.json())
     .then((email) => {
-      document.querySelector("#email-sender").innerHTML= email.sender;
-      document.querySelector("#email-recipients").innerHTML= email.recipients;
-      document.querySelector("#email-subject").innerHTML= email.subject;
+      document.querySelector("#email-sender").innerHTML = email.sender;
+      document.querySelector("#email-recipients").innerHTML = email.recipients;
+      document.querySelector("#email-subject").innerHTML = email.subject;
       let bodySection = document.querySelector("#email-body");
       // Clear any content inside the email-body div
       bodySection.innerHTML = "";
-      email.body.split("\n").forEach((line)=>{
+      email.body.split("\n").forEach((line) => {
         let p = document.createElement("p");
         p.innerHTML = line;
         bodySection.appendChild(p);
